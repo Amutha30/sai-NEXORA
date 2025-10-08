@@ -1,0 +1,80 @@
+/* Section wrapper */
+.videos-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+}
+
+/* Title */
+.videos-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #2e7d32;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* Horizontal row layout */
+.videos-row {
+  display: flex;
+  flex-direction: row;  /* horizontal alignment */
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;      /* wrap for smaller screens */
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* Video cards */
+.video-card {
+  flex: 0 1 280px;       /* slightly wider than games */
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.video-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Title inside card */
+.video-name {
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #388e3c;
+}
+
+/* Watch button */
+.video-btn {
+  background: #66bb6a;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.video-btn:hover {
+  background: #4caf50;
+}
+
+/* Responsive for mobile */
+@media (max-width: 768px) {
+  .videos-row {
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .video-card {
+    flex: 1 1 100%;
+    max-width: 320px;
+  }
+}

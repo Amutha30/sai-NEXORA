@@ -1,0 +1,131 @@
+/* Background */
+.dashboard-root {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #dfffd6, #a8e6cf);
+  font-family: "Poppins", sans-serif;
+  color: #333;
+}
+
+/* Main area */
+.main-area {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+/* Titles */
+.dashboard-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2e7d32;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Cards */
+.card {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  margin: 1rem 0;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+/* Wide cards */
+.wide-card {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Leaderboard */
+.leaderboard-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.leaderboard-entry {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.student-name {
+  font-weight: 600;
+}
+
+.student-score {
+  color: #388e3c;
+  font-weight: 500;
+}
+
+.eco-icon {
+  margin: 0 5px;
+  color: #66bb6a;
+}
+
+/* Activity progress */
+.activity-item {
+  margin: 0.8rem 0;
+}
+
+.activity-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+}
+
+.progress-bar {
+  background: #e0f2f1;
+  height: 8px;
+  border-radius: 6px;
+  margin-top: 0.4rem;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background: #66bb6a;
+  height: 100%;
+  border-radius: 6px;
+}
+
+/* Games row */
+.games-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+/* Centered content (like quizzes, videos) */
+.centered-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Button */
+.btn {
+  background: #66bb6a;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.6rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn:hover {
+  background: #43a047;
+  transform: scale(1.05);
+}
