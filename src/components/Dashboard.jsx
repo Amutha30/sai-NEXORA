@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import GamesList from "./GamesList";
 import LearningVideosList from "./LearningVideosList";
@@ -10,13 +10,47 @@ export default function Dashboard({ onLogout }) {
   const [collapsed, setCollapsed] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
 
+  // ✅ Added states for backend data
+  const [leaderboard, setLeaderboard] = useState(SAMPLE_LEADERBOARD);
+  const [tracking, setTracking] = useState(SAMPLE_TRACKING);
+
+  // ✅ Fetch leaderboard + tracking data from backend when dashboard loads
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const token = localStorage.getItem("token"); // assuming login saves token
+        const resLeaderboard = await fetch("http://localhost:5000/api/leaderboard", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const dataLeaderboard = await resLeaderboard.json();
+        setLeaderboard(dataLeaderboard);
+
+        const resTracking = await fetch("http://localhost:5000/api/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const dataTracking = await resTracking.json();
+
+        // transform backend user stats into progress bars format
+        setTracking([
+          { label: "Games Played", value: dataTracking.gamesPlayed || 0 },
+          { label: "Badges Earned", value: dataTracking.badgesCount || 0 },
+          { label: "Certificates", value: dataTracking.certificatesCount || 0 },
+        ]);
+      } catch (err) {
+        console.error("Error fetching dashboard data:", err);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
   const toggleSidebar = () => setCollapsed((prev) => !prev);
 
   const LeaderboardCard = () => (
     <div className="card wide-card leaderboard-card">
       <h3 className="card-title">🌟 Leaderboard</h3>
       <ul className="leaderboard-list">
-        {SAMPLE_LEADERBOARD.map((p, i) => (
+        {leaderboard.map((p, i) => (
           <li key={i} className="leaderboard-entry">
             <span className="student-name">{p.name}</span>
             <span className="student-score">
@@ -31,7 +65,7 @@ export default function Dashboard({ onLogout }) {
   const ActivityCard = () => (
     <div className="card wide-card activity-card">
       <h3 className="card-title">📊 Your Activity</h3>
-      {SAMPLE_TRACKING.map((t, i) => (
+      {tracking.map((t, i) => (
         <div key={i} className="activity-item">
           <div className="activity-row">
             <span>{t.label}</span>
@@ -111,3 +145,4 @@ export default function Dashboard({ onLogout }) {
     </div>
   );
 }
+

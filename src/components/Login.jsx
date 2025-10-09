@@ -2,17 +2,41 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { SAMPLE_VIDEO } from '../data';
 
-export default function Login({ onLogin }){
+export default function Login({ onLogin }) {
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
 
-  const handleChange = e => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = e =>
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
-  function handleSubmit(e){
+  async function handleSubmit(e) {
     e.preventDefault();
-    const demoUser = { firstName: 'Demo', lastName: 'Kid', email: form.email };
-    onLogin(demoUser);
-    navigate('/dashboard');
+    setError('');
+
+    try {
+      // 🔗 Call backend API
+      const res = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.token) {
+        // ✅ Successful login
+        localStorage.setItem('token', data.token);
+        onLogin(data.user);
+        navigate('/dashboard');
+      } else {
+        // ❌ Invalid credentials
+        setError(data.message || 'Invalid email or password');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('Something went wrong. Please try again.');
+    }
   }
 
   return (
@@ -32,10 +56,30 @@ export default function Login({ onLogin }){
 
         <div className="auth-right">
           <form className="form" onSubmit={handleSubmit}>
-            <input className="input" name="email" placeholder="Email" value={form.email} onChange={handleChange} required />
-            <input className="input" name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} required />
-            <button className="btn btn-primary" type="submit">Login</button>
-            <div style={{marginTop:12}}>
+            <input
+              className="input"
+              name="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+            <input
+              className="input"
+              name="password"
+              type="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+            <button className="btn btn-primary" type="submit">
+              Login
+            </button>
+            {error && (
+              <p style={{ color: 'red', marginTop: '8px' }}>{error}</p>
+            )}
+            <div style={{ marginTop: 12 }}>
               <span>New? </span>
               <Link to="/signup">Create account</Link>
             </div>
@@ -45,3 +89,4 @@ export default function Login({ onLogin }){
     </div>
   );
 }
+
