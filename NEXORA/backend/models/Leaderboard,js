@@ -1,0 +1,10 @@
+import mongoose from "mongoose";
+
+const leaderboardSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  totalPoints: Number,
+  totalBadges: Number,
+  lastUpdated: { type: Date, default: Date.now },
+});
+
+export default mongoose.model("Leaderboard", leaderboardSchema);
