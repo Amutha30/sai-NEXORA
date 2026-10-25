@@ -1,62 +1,76 @@
 .sidebar {
-  width: 240px;
-  min-height: 100vh;
-  background: #f0fdf4;
-  color: #2e7d32;
+  width: 250px;
+  height: 100vh;
+  background: #ffffff;
+  color: #1b5e20;
   display: flex;
   flex-direction: column;
-  padding: 1rem;
-  transition: width 0.3s ease;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
-  position: fixed;
+  padding: 1.5rem 1rem;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 2px 0 14px rgba(46, 125, 50, 0.08);
+  flex-shrink: 0;
+  position: sticky;
   top: 0;
-  left: 0;
+  z-index: 50;
+  border-right: 1px solid rgba(76, 175, 80, 0.15);
 }
 
 .sidebar.collapsed {
-  width: 80px;
+  width: 82px;
+  padding: 1.5rem 0.6rem;
 }
 
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  font-size: 1.6rem;
+  gap: 0.8rem;
+  font-size: 1.5rem;
   font-weight: 800;
-  color: #2e7d32;
-  margin-bottom: 1rem;
+  color: #1b5e20;
+  margin-bottom: 1.2rem;
+  padding: 0 0.4rem;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .brand-icon {
   font-size: 1.8rem;
+  color: #43a047;
+  flex-shrink: 0;
 }
 
 .brand-text {
-  font-family: "Comic Sans MS", "Poppins", sans-serif;
-  font-size: 1.6rem;
+  font-family: "Poppins", sans-serif;
+  font-size: 1.5rem;
   font-weight: 900;
+  letter-spacing: 0.5px;
 }
 
 .toggle-btn {
-  background: #c8e6c9;
-  border: none;
+  background: #e8f5e9;
+  border: 1px solid #c8e6c9;
   padding: 0.6rem;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   color: #2e7d32;
-  margin-bottom: 2rem;
-  transition: background 0.2s ease;
+  margin-bottom: 1.5rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .toggle-btn:hover {
-  background: #a5d6a7;
+  background: #c8e6c9;
+  color: #1b5e20;
 }
 
 .menu {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.6rem;
+  flex: 1;
 }
 
 .menu-item {
@@ -64,31 +78,50 @@
   align-items: center;
   gap: 1rem;
   padding: 0.8rem 1rem;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
   color: #2e7d32;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar.collapsed .menu-item {
+  justify-content: center;
+  padding: 0.8rem;
 }
 
 .menu-item:hover {
-  background: #dcedc8;
+  background: #e8f5e9;
+  color: #1b5e20;
   transform: translateX(4px);
 }
 
+.sidebar.collapsed .menu-item:hover {
+  transform: scale(1.08);
+}
+
 .menu-icon {
-  font-size: 1.5rem;
+  font-size: 1.35rem;
+  flex-shrink: 0;
+  color: #43a047;
 }
 
 .menu-label {
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 
 .logout {
   margin-top: auto;
-  color: #d32f2f;
+  color: #c62828;
 }
 
 .logout:hover {
-  background: #ffcdd2;
+  background: #ffebee;
+  color: #b71c1c;
+}
+
+.logout .menu-icon {
+  color: #e53935;
 }

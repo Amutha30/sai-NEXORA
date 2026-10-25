@@ -1,4 +1,4 @@
-export const SAMPLE_VIDEO = '/video.mp4'; // or external URL
+export const SAMPLE_VIDEO = '/eco.mp4.mp4';
 
 export const SAMPLE_LEADERBOARD = [
   { id: 1, name: 'Aanya', score: 980, ecopoints: 120 },

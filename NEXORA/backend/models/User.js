@@ -28,6 +28,38 @@ const userSchema = new mongoose.Schema(
         return this.role === "student";
       },
     },
+    points: {
+      type: Number,
+      default: 50, // Welcome points
+    },
+    badges: {
+      type: [String],
+      default: ["Eco Starter"],
+    },
+    gamesPlayed: {
+      type: Number,
+      default: 0,
+    },
+    quizzesTaken: {
+      type: Number,
+      default: 0,
+    },
+    gameHistory: [
+      {
+        gameName: String,
+        score: { type: Number, default: 0 },
+        pointsEarned: { type: Number, default: 10 },
+        playedAt: { type: Date, default: Date.now },
+      },
+    ],
+    quizHistory: [
+      {
+        quizTitle: String,
+        score: { type: Number, default: 0 },
+        pointsEarned: { type: Number, default: 20 },
+        takenAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   { timestamps: true }
 );

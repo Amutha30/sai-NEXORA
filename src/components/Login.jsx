@@ -1,5 +1,14 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  FaLeaf,
+  FaEnvelope,
+  FaLock,
+  FaUserGraduate,
+  FaChalkboardTeacher,
+  FaExclamationCircle,
+  FaArrowRight,
+} from "react-icons/fa";
 import { SAMPLE_VIDEO } from "../data";
 import "./AuthForms.css";
 
@@ -8,13 +17,20 @@ export default function Login({ onLogin }) {
   const [form, setForm] = useState({ email: "", password: "" });
   const [role, setRole] = useState("student");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
+  const handleRoleChange = (selectedRole) => {
+    setRole(selectedRole);
+    setError("");
+  };
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
       const res = await fetch("http://localhost:5000/api/auth/login", {
@@ -23,15 +39,21 @@ export default function Login({ onLogin }) {
         body: JSON.stringify({
           email: form.email,
           password: form.password,
+          role,
         }),
       });
 
       const data = await res.json();
 
       if (res.ok && data.token) {
+        const normalizedUser = {
+          ...data.user,
+          _id: data.user.id || data.user._id,
+          id: data.user.id || data.user._id,
+        };
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        onLogin(data.user);
+        localStorage.setItem("user", JSON.stringify(normalizedUser));
+        onLogin(normalizedUser);
 
         if (role === "staff") navigate("/staff-dashboard");
         else navigate("/dashboard");
@@ -40,16 +62,15 @@ export default function Login({ onLogin }) {
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError("Something went wrong. Please try again.");
+      setError("Unable to connect to the server. Please check your connection.");
+    } finally {
+      setLoading(false);
     }
   }
 
-  const bgColor = role === "student" ? "#e3f2fd" : "#e8f5e9";
-  const themeColor = role === "student" ? "#1976d2" : "#2e7d32";
-
   return (
-    <div className="auth-page" style={{ background: bgColor }}>
-      {/* Background video */}
+    <div className="auth-page">
+      {/* Background with video and emerald gradient overlay */}
       <div className="video-bg" aria-hidden>
         <video autoPlay muted loop playsInline>
           <source src={SAMPLE_VIDEO} type="video/mp4" />
@@ -57,66 +78,108 @@ export default function Login({ onLogin }) {
         <div className="overlay" />
       </div>
 
-      <div className="auth-card">
-        <div className="intro">
-          <h1 style={{ color: themeColor }}>Welcome to NEXORA</h1>
-          <p>Login to your {role} account</p>
+      {/* Decorative background shapes */}
+      <div className="eco-orb orb-1" />
+      <div className="eco-orb orb-2" />
 
-          <div className="role-toggle">
-            <button
-              onClick={() => setRole("student")}
-              style={{
-                background: role === "student" ? themeColor : "#ccc",
-              }}
-            >
-              Student
-            </button>
-            <button
-              onClick={() => setRole("staff")}
-              style={{
-                background: role === "staff" ? themeColor : "#ccc",
-              }}
-            >
-              Staff
-            </button>
+      {/* Main Auth Card */}
+      <div className="auth-card">
+        {/* Brand Header */}
+        <div className="brand-header">
+          <div className="brand-icon-badge">
+            <FaLeaf className="brand-icon" />
           </div>
+          <h1 className="brand-title">NEXORA</h1>
+          <p className="brand-subtitle">Environmental Learning & Eco Action</p>
         </div>
 
-        <form className="form" onSubmit={handleSubmit}>
-          <input
-            className="input"
-            name="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
-          <input
-            className="input"
-            name="password"
-            type="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
-          <button
-            className="btn"
-            type="submit"
-            style={{ background: themeColor }}
-          >
-            Login
-          </button>
-
-          {error && <p className="error">{error}</p>}
-
-          <div className="link-text">
-            <span>New? </span>
-            <Link to="/signup" style={{ color: themeColor }}>
-              Create account
-            </Link>
+        {/* Role Toggle Selector */}
+        <div className="role-selector-wrap">
+          <span className="role-label">Select Portal:</span>
+          <div className="role-toggle-pill">
+            <button
+              type="button"
+              className={`role-btn ${role === "student" ? "active" : ""}`}
+              onClick={() => handleRoleChange("student")}
+            >
+              <FaUserGraduate className="role-btn-icon" />
+              <span>Student</span>
+            </button>
+            <button
+              type="button"
+              className={`role-btn ${role === "staff" ? "active" : ""}`}
+              onClick={() => handleRoleChange("staff")}
+            >
+              <FaChalkboardTeacher className="role-btn-icon" />
+              <span>Staff</span>
+            </button>
           </div>
+          <p className="role-hint">
+            {role === "student"
+              ? "🌿 Play eco games, take quizzes & earn EcoPoints!"
+              : "📊 View student analytics, game scores & class progress."}
+          </p>
+        </div>
+
+        {/* Error Alert */}
+        {error && (
+          <div className="auth-alert error-alert">
+            <FaExclamationCircle className="alert-icon" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        {/* Login Form */}
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="input-field">
+            <label htmlFor="email">Email Address</label>
+            <div className="input-wrap">
+              <FaEnvelope className="input-icon" />
+              <input
+                id="email"
+                className="input-box"
+                name="email"
+                type="email"
+                placeholder={
+                  role === "student" ? "student@school.edu" : "teacher@school.edu"
+                }
+                value={form.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="input-field">
+            <label htmlFor="password">Password</label>
+            <div className="input-wrap">
+              <FaLock className="input-icon" />
+              <input
+                id="password"
+                className="input-box"
+                name="password"
+                type="password"
+                placeholder="Enter your password"
+                value={form.password}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+
+          <button className="auth-submit-btn" type="submit" disabled={loading}>
+            <span>{loading ? "Authenticating..." : `Log In as ${role === "student" ? "Student" : "Staff"}`}</span>
+            <FaArrowRight className="btn-arrow" />
+          </button>
         </form>
+
+        {/* Bottom Link to Sign Up */}
+        <div className="auth-switch-link">
+          <span>New to NEXORA? </span>
+          <Link to="/signup" className="signup-link">
+            Create an Account
+          </Link>
+        </div>
       </div>
     </div>
   );

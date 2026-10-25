@@ -1,0 +1,25 @@
+# Node dependencies
+node_modules/
+NEXORA/backend/node_modules/
+
+# Production build outputs
+build/
+dist/
+
+# Environment configurations
+.env
+NEXORA/backend/.env
+
+# Logs and Caches
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+.cache/
+
+# System and Editor files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.tmp

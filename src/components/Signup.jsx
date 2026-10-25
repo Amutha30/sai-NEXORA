@@ -1,5 +1,17 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  FaLeaf,
+  FaUser,
+  FaEnvelope,
+  FaLock,
+  FaUserGraduate,
+  FaChalkboardTeacher,
+  FaExclamationCircle,
+  FaCheckCircle,
+  FaArrowRight,
+  FaCalendarAlt,
+} from "react-icons/fa";
 import { SAMPLE_VIDEO } from "../data";
 import "./AuthForms.css";
 
@@ -14,9 +26,16 @@ export default function Signup({ onSignup }) {
   const [role, setRole] = useState("student");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+
+  const handleRoleChange = (selectedRole) => {
+    setRole(selectedRole);
+    setError("");
+    setSuccess("");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,8 +46,10 @@ export default function Signup({ onSignup }) {
       return setError("Please enter your age for student signup.");
     }
     if (role === "staff" && form.age) {
-      return setError("Staff signup should not include age.");
+      return setError("Staff signup does not require age.");
     }
+
+    setLoading(true);
 
     try {
       const res = await fetch("http://localhost:5000/api/auth/signup", {
@@ -44,15 +65,19 @@ export default function Signup({ onSignup }) {
       });
 
       const data = await res.json();
-      console.log("Signup response:", data);
 
       if (res.ok && data.user) {
+        const normalizedUser = {
+          ...data.user,
+          _id: data.user.id || data.user._id,
+          id: data.user.id || data.user._id,
+        };
         localStorage.setItem("token", data.token || "");
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("user", JSON.stringify(normalizedUser));
         localStorage.setItem("role", role);
 
-        setSuccess("Account created successfully!");
-        onSignup(data.user);
+        setSuccess("Account created successfully! Redirecting...");
+        onSignup(normalizedUser);
 
         setTimeout(() => {
           navigate(role === "staff" ? "/staff-dashboard" : "/dashboard");
@@ -62,16 +87,15 @@ export default function Signup({ onSignup }) {
       }
     } catch (err) {
       console.error("Signup error:", err);
-      setError("Something went wrong. Please try again.");
+      setError("Unable to connect to server. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const bgColor = role === "student" ? "#e3f2fd" : "#e8f5e9";
-  const themeColor = role === "student" ? "#1976d2" : "#2e7d32";
-
   return (
-    <div className="auth-page" style={{ background: bgColor }}>
-      {/* Background video */}
+    <div className="auth-page">
+      {/* Background with video and emerald gradient overlay */}
       <div className="video-bg" aria-hidden>
         <video autoPlay muted loop playsInline>
           <source src={SAMPLE_VIDEO} type="video/mp4" />
@@ -79,89 +103,152 @@ export default function Signup({ onSignup }) {
         <div className="overlay" />
       </div>
 
-      {/* Signup Card */}
-      <div className="auth-card">
-        <div className="intro">
-          <h1 style={{ color: themeColor }}>Welcome to NEXORA</h1>
-          <p>Create your {role} account</p>
+      {/* Decorative background shapes */}
+      <div className="eco-orb orb-1" />
+      <div className="eco-orb orb-2" />
 
-          <div className="role-toggle">
-            <button
-              type="button"
-              onClick={() => setRole("student")}
-              style={{
-                background: role === "student" ? themeColor : "#ccc",
-              }}
-            >
-              Student
-            </button>
-            <button
-              type="button"
-              onClick={() => setRole("staff")}
-              style={{
-                background: role === "staff" ? themeColor : "#ccc",
-              }}
-            >
-              Staff
-            </button>
+      {/* Main Signup Card */}
+      <div className="auth-card">
+        {/* Brand Header */}
+        <div className="brand-header">
+          <div className="brand-icon-badge">
+            <FaLeaf className="brand-icon" />
           </div>
+          <h1 className="brand-title">Join NEXORA</h1>
+          <p className="brand-subtitle">Create your environmental learning account</p>
         </div>
 
-        <form className="form" onSubmit={handleSubmit}>
-          <input
-            className="input"
-            name="name"
-            placeholder={
-              role === "student" ? "Student Name" : "Staff Name"
-            }
-            value={form.name}
-            onChange={handleChange}
-            required
-          />
-          <input
-            className="input"
-            name="email"
-            type="email"
-            placeholder={
-              role === "student"
-                ? "student@school.edu"
-                : "staff@school.edu"
-            }
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
-          {role === "student" && (
-            <input
-              className="input"
-              name="age"
-              type="number"
-              placeholder="Age"
-              value={form.age}
-              onChange={handleChange}
-              required
-            />
-          )}
-          <input
-            className="input"
-            name="password"
-            type="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
-          <button
-            className="btn"
-            type="submit"
-            style={{ background: themeColor }}
-          >
-            Sign Up
-          </button>
+        {/* Role Toggle Selector */}
+        <div className="role-selector-wrap">
+          <span className="role-label">Register As:</span>
+          <div className="role-toggle-pill">
+            <button
+              type="button"
+              className={`role-btn ${role === "student" ? "active" : ""}`}
+              onClick={() => handleRoleChange("student")}
+            >
+              <FaUserGraduate className="role-btn-icon" />
+              <span>Student</span>
+            </button>
+            <button
+              type="button"
+              className={`role-btn ${role === "staff" ? "active" : ""}`}
+              onClick={() => handleRoleChange("staff")}
+            >
+              <FaChalkboardTeacher className="role-btn-icon" />
+              <span>Staff</span>
+            </button>
+          </div>
+          <p className="role-hint">
+            {role === "student"
+              ? "🌱 Start learning, play games, and compete on the leaderboard!"
+              : "👩‍🏫 Monitor student progress, review exam logs & mentor learners."}
+          </p>
+        </div>
 
-          {error && <p className="error">{error}</p>}
-          {success && <p className="success">{success}</p>}
+        {/* Error Alert */}
+        {error && (
+          <div className="auth-alert error-alert">
+            <FaExclamationCircle className="alert-icon" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        {/* Success Alert */}
+        {success && (
+          <div className="auth-alert success-alert">
+            <FaCheckCircle className="alert-icon" />
+            <span>{success}</span>
+          </div>
+        )}
+
+        {/* Form */}
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="input-field">
+            <label htmlFor="name">Full Name</label>
+            <div className="input-wrap">
+              <FaUser className="input-icon" />
+              <input
+                id="name"
+                className="input-box"
+                name="name"
+                type="text"
+                placeholder={role === "student" ? "e.g. Alex Green" : "e.g. Prof. Green"}
+                value={form.name}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="input-field">
+            <label htmlFor="email">Email Address</label>
+            <div className="input-wrap">
+              <FaEnvelope className="input-icon" />
+              <input
+                id="email"
+                className="input-box"
+                name="email"
+                type="email"
+                placeholder={role === "student" ? "student@school.edu" : "teacher@school.edu"}
+                value={form.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+
+          {role === "student" && (
+            <div className="input-field">
+              <label htmlFor="age">Age</label>
+              <div className="input-wrap">
+                <FaCalendarAlt className="input-icon" />
+                <input
+                  id="age"
+                  className="input-box"
+                  name="age"
+                  type="number"
+                  min="5"
+                  max="100"
+                  placeholder="Enter your age (e.g. 11)"
+                  value={form.age}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="input-field">
+            <label htmlFor="password">Password</label>
+            <div className="input-wrap">
+              <FaLock className="input-icon" />
+              <input
+                id="password"
+                className="input-box"
+                name="password"
+                type="password"
+                placeholder="Create a strong password"
+                value={form.password}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+
+          <button className="auth-submit-btn" type="submit" disabled={loading}>
+            <span>{loading ? "Creating Account..." : `Sign Up as ${role === "student" ? "Student" : "Staff"}`}</span>
+            <FaArrowRight className="btn-arrow" />
+          </button>
         </form>
+
+        {/* Bottom Link to Login */}
+        <div className="auth-switch-link">
+          <span>Already have an account? </span>
+          <Link to="/" className="signup-link">
+            Log In
+          </Link>
+        </div>
       </div>
     </div>
   );
